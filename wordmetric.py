@@ -40,6 +40,8 @@ class LevehnsteinDistance(Distance):
         2
         >>> ld.edit_distance("penguin", "pencil")
         3
+        >>> ld.edit_distance("hallo", "hell")
+        2
         """
         s = squash(s)
         t = squash(t)

@@ -212,7 +212,8 @@ class FarooSpellingCorrector(SpellingCorector):
 
         Uses the metric set at initialization.
         """
-        return self.metric.edit_distance(original, other)
+        dist = self.metric.edit_distance(original, other)
+        return dist
 
     def keep_lowest_distance(self, suggestion_list, suggestion):
         """Add the new suggestion to the list and remove all non-minimal."""
@@ -246,6 +247,8 @@ class FarooSpellingCorrector(SpellingCorector):
         [hell]
         >>> f.suggest("help")
         [hell]
+        >>> f.suggest("hallo")
+        [hello]
         """
         suggestions = set()
         candidates = collections.deque([Suggestion(word, 1, 0)])
@@ -265,11 +268,12 @@ class FarooSpellingCorrector(SpellingCorector):
                         some_suggestion = next(iter(suggestions))
                         # Skip if worse
                         if some_suggestion.distance \
-                           < candidate_suggestion.distance:
+                           < distance:
                             continue
+                        # Clear all if better
                         if some_suggestion.distance \
-                           > candidate_suggestion.distance:
-                            suggestions = {candidate_suggestion}
+                           > distance:
+                            suggestions.clear()
 
                     suggestions.add(candidate_suggestion)
 
