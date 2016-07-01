@@ -128,7 +128,7 @@ class FarooSpellingCorrector(SpellingCorector):
             self.dictionary[entry] = term = Term(entry, 0)
             deletes = self.edits(entry, max_distance=self.max_distance)
 
-            self.suggestions[entry] = Suggestion(entry, distance=0)
+            self.suggestions[entry] = [Suggestion(entry, distance=0)]
             for delete in deletes:
                 suggestion = Suggestion(entry, distance=delete.distance)
 

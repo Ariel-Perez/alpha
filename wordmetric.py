@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
+"""Metrics for word comparison."""
 import collections
 import itertools
 
@@ -18,20 +19,33 @@ def squash(word):
 
 
 class Distance:
+    """Class that computes distance between two words."""
+
     def edit_distance(self, s, t):
-        """
-        Computes the edit distance between two strings.
-        """
+        """Compute the edit distance between two strings."""
         raise NotImplementedError()
 
 
 class LevehnsteinDistance(Distance):
+    """Levehnstein distance between two words."""
+
     def letter_distance(self, a, b):
-        return 0 if a == b else 1
+        """Compute the distance between two letters."""
+        if a == b:
+            return 0
+        elif {a, b} in [
+                {u'á', u'a'},
+                {u'é', u'e'},
+                {u'í', u'i'},
+                {u'ó', u'o'},
+                {u'ú', u'u'}]:
+            return 0.1
+        else:
+            return 1
 
     def edit_distance(self, s, t):
-        """
-        Computes the edit distance between two strings.
+        u"""
+        Compute the edit distance between two strings.
 
         Previously, collapses all repetition of 3+ characters to 2 at most.
 
@@ -42,9 +56,15 @@ class LevehnsteinDistance(Distance):
         3
         >>> ld.edit_distance("hallo", "hell")
         2
+        >>> ld.edit_distance("hello", "HELLO")
+        0
+        >>> ld.edit_distance(u"ÁREA", u"área")
+        0
+        >>> ld.edit_distance(u"ÁREA", u"area")
+        0.1
         """
-        s = squash(s)
-        t = squash(t)
+        s = squash(s.lower())
+        t = squash(t.lower())
 
         m = len(s)
         n = len(t)
@@ -81,6 +101,8 @@ class LevehnsteinDistance(Distance):
 
 
 class TypoAdmissiveDistance(LevehnsteinDistance):
+    """Distance metric that allows for keyboard typos."""
+
     def __init__(self):
         """Initialize an instance of TypoAdmissiveDistance."""
         self.dist_dict = self.build_distance_dictionary()
